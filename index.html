@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>100點能力投資測驗</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #111;
+            color: white;
+            text-align: center;
+        }
+
+        .points {
+            font-size: 24px;
+            margin: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .selected {
+            background: #ff4d6d;
+            color: white;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            margin: 30px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>如果你只有 100 點能力值</h1>
+    <div class="points">剩餘點數：<span id="remain">100</span></div>
+
+    <div class="grid" id="skillGrid"></div>
+
+    <button id="resultBtn" disabled>查看推薦書單</button>
+
+    <div id="result"></div>
+
+    <script>
+
+const skills = [
+  { id: "read_room", name: "閱讀空氣", cost: 30 },
+  { id: "charisma", name: "魅力培養", cost: 40 },
+  { id: "product_planning", name: "長銷商品企劃力", cost: 50 },
+  { id: "innovation", name: "破框創新思維", cost: 40 },
+  { id: "idea_system", name: "系統化創意產出", cost: 30 },
+  { id: "communication", name: "高效溝通", cost: 40 },
+  { id: "productivity", name: "高效生產力", cost: 30 },
+  { id: "thoughtfulness", name: "職場體貼行為", cost: 20 },
+  { id: "focus", name: "贏回注意力", cost: 30 },
+  { id: "project_system", name: "系統化專案控管", cost: 50 },
+  { id: "content_business", name: "內容創業思維", cost: 40 },
+  { id: "learning", name: "高效學習", cost: 40 }
+];
+
+const books = [
+  {
+    title: "閱讀空氣懂人心",
+    url: "https://leadership.ntu.edu.tw/read-the-room/",
+    main: "read_room"
+  },
+  {
+    title: "魅力學",
+    url: "https://leadership.ntu.edu.tw/%e9%ad%85%e5%8a%9b%e5%ad%b8%ef%bc%9a%e7%84%a1%e5%be%80%e4%b8%8d%e5%88%a9%e7%9a%84%e8%87%aa%e6%88%91%e7%b6%93%e7%87%9f%e8%a1%93/",
+    main: "charisma"
+  },
+  {
+    title: "熱賣商品企劃力",
+    url: "https://leadership.ntu.edu.tw/best-selling_product_planning/",
+    main: "product_planning"
+  },
+  {
+    title: "破框思維的技術",
+    url: "https://leadership.ntu.edu.tw/%e7%a0%b4%e6%a1%86%e6%80%9d%e7%b6%ad6%e6%ad%a5%e9%a9%9f%e7%94%a8%e5%85%a8%e4%ba%ba%e9%a1%9e%e7%9a%84%e6%99%ba%e6%85%a7%e7%a9%8d%e7%b4%af%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c/",
+    main: "innovation"
+  }
+];
+
+let total = 100;
+let used = 0;
+let selected = {};
+
+const grid = document.getElementById("skillGrid");
+const remain = document.getElementById("remain");
+const resultBtn = document.getElementById("resultBtn");
+const resultDiv = document.getElementById("result");
+
+skills.forEach(skill => {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `${skill.name}<br>$${skill.cost}`;
+
+  card.onclick = () => {
+    if (selected[skill.id]) {
+      used -= skill.cost;
+      delete selected[skill.id];
+      card.classList.remove("selected");
+    } else {
+      if (used + skill.cost > total) return;
+      used += skill.cost;
+      selected[skill.id] = skill.cost;
+      card.classList.add("selected");
+    }
+    remain.textContent = total - used;
+    resultBtn.disabled = used !== 100;
+  };
+
+  grid.appendChild(card);
+});
+
+resultBtn.onclick = () => {
+  let matchedBooks = books.filter(book =>
+    selected[book.main]
+  );
+
+  resultDiv.innerHTML = "<h2>推薦書單</h2>";
+  matchedBooks.forEach(book => {
+    resultDiv.innerHTML += `
+      <p>
+        <a href="${book.url}" target="_blank" style="color:#ff4d6d">
+        ${book.title}
+        </a>
+      </p>
+    `;
+  });
+};
+
+    </script>
+
+</body>
+</html>
