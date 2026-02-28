@@ -1,151 +1,267 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <title>100點能力投資測驗</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #111;
-            color: white;
-            text-align: center;
-        }
+<meta charset="UTF-8">
 
-        .points {
-            font-size: 24px;
-            margin: 20px;
-        }
+<!-- 手機版關鍵設定 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            max-width: 900px;
-            margin: auto;
-        }
+<title>能力投資測驗</title>
 
-        .card {
-            background: white;
-            color: black;
-            padding: 20px;
-            border-radius: 10px;
-            cursor: pointer;
-        }
+<style>
 
-        .selected {
-            background: #ff4d6d;
-            color: white;
-        }
+body{
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+  background:#111;
+  color:white;
+  margin:0;
+  padding:20px;
+}
 
-        button {
-            padding: 15px 30px;
-            font-size: 18px;
-            margin: 30px;
-            cursor: pointer;
-        }
-    </style>
+.container{
+  max-width:500px;
+  margin:auto;
+}
+
+h1{
+  font-size:24px;
+  line-height:1.5;
+  margin-bottom:20px;
+}
+
+.points{
+  font-size:20px;
+  margin-bottom:20px;
+}
+
+.grid{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.card{
+  background:white;
+  color:black;
+  padding:18px;
+  border-radius:12px;
+  font-size:18px;
+  cursor:pointer;
+  border:3px solid transparent;
+}
+
+.card.selected{
+  background:#ff4d6d;
+  color:white;
+  border:3px solid #ff4d6d;
+}
+
+button{
+  width:100%;
+  padding:16px;
+  font-size:18px;
+  margin-top:20px;
+  border-radius:12px;
+  border:none;
+  background:#ff4d6d;
+  color:white;
+}
+
+button:disabled{
+  background:gray;
+}
+
+.result{
+  margin-top:30px;
+}
+
+.book{
+  background:white;
+  color:black;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+.book a{
+  color:#ff4d6d;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+</style>
 </head>
+
 <body>
 
-    <h1>如果你只有 100 點能力值</h1>
-    <div class="points">剩餘點數：<span id="remain">100</span></div>
+<div class="container">
 
-    <div class="grid" id="skillGrid"></div>
+<h1>
+新的一年你獲得了100點能力點<br><br>
+請問你想要學習哪些能力
+</h1>
 
-    <button id="resultBtn" disabled>查看推薦書單</button>
+<div class="points">
+剩餘點數：<span id="remain">100</span>
+</div>
 
-    <div id="result"></div>
+<div class="grid" id="skillGrid"></div>
 
-    <script>
+<button id="resultBtn" disabled>
+查看推薦書單
+</button>
+
+<div id="result" class="result"></div>
+
+</div>
+
+<script>
+
+// ===== 能力 =====
 
 const skills = [
-  { id: "read_room", name: "閱讀空氣", cost: 30 },
-  { id: "charisma", name: "魅力培養", cost: 40 },
-  { id: "product_planning", name: "長銷商品企劃力", cost: 50 },
-  { id: "innovation", name: "破框創新思維", cost: 40 },
-  { id: "idea_system", name: "系統化創意產出", cost: 30 },
-  { id: "communication", name: "高效溝通", cost: 40 },
-  { id: "productivity", name: "高效生產力", cost: 30 },
-  { id: "thoughtfulness", name: "職場體貼行為", cost: 20 },
-  { id: "focus", name: "贏回注意力", cost: 30 },
-  { id: "project_system", name: "系統化專案控管", cost: 50 },
-  { id: "content_business", name: "內容創業思維", cost: 40 },
-  { id: "learning", name: "高效學習", cost: 40 }
+ {id:"read_room",name:"閱讀空氣",cost:30},
+ {id:"charisma",name:"魅力培養",cost:40},
+ {id:"product_planning",name:"長銷商品企劃力",cost:50},
+ {id:"innovation",name:"破框創新思維",cost:40},
+ {id:"idea_system",name:"系統化創意產出",cost:30},
+ {id:"communication",name:"高效溝通",cost:40},
+ {id:"productivity",name:"高效生產力",cost:30},
+ {id:"thoughtfulness",name:"職場體貼行為",cost:20},
+ {id:"focus",name:"贏回注意力",cost:30},
+ {id:"project_system",name:"系統化專案控管",cost:50},
+ {id:"content_business",name:"內容創業思維",cost:40},
+ {id:"learning",name:"高效學習",cost:40}
 ];
 
-const books = [
-  {
-    title: "閱讀空氣懂人心",
-    url: "https://leadership.ntu.edu.tw/read-the-room/",
-    main: "read_room"
-  },
-  {
-    title: "魅力學",
-    url: "https://leadership.ntu.edu.tw/%e9%ad%85%e5%8a%9b%e5%ad%b8%ef%bc%9a%e7%84%a1%e5%be%80%e4%b8%8d%e5%88%a9%e7%9a%84%e8%87%aa%e6%88%91%e7%b6%93%e7%87%9f%e8%a1%93/",
-    main: "charisma"
-  },
-  {
-    title: "熱賣商品企劃力",
-    url: "https://leadership.ntu.edu.tw/best-selling_product_planning/",
-    main: "product_planning"
-  },
-  {
-    title: "破框思維的技術",
-    url: "https://leadership.ntu.edu.tw/%e7%a0%b4%e6%a1%86%e6%80%9d%e7%b6%ad6%e6%ad%a5%e9%a9%9f%e7%94%a8%e5%85%a8%e4%ba%ba%e9%a1%9e%e7%9a%84%e6%99%ba%e6%85%a7%e7%a9%8d%e7%b4%af%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c/",
-    main: "innovation"
-  }
-];
 
-let total = 100;
-let used = 0;
-let selected = {};
+// ===== 書籍 =====
 
-const grid = document.getElementById("skillGrid");
-const remain = document.getElementById("remain");
-const resultBtn = document.getElementById("resultBtn");
-const resultDiv = document.getElementById("result");
-
-skills.forEach(skill => {
-  const card = document.createElement("div");
-  card.className = "card";
-  card.innerHTML = `${skill.name}<br>$${skill.cost}`;
-
-  card.onclick = () => {
-    if (selected[skill.id]) {
-      used -= skill.cost;
-      delete selected[skill.id];
-      card.classList.remove("selected");
-    } else {
-      if (used + skill.cost > total) return;
-      used += skill.cost;
-      selected[skill.id] = skill.cost;
-      card.classList.add("selected");
-    }
-    remain.textContent = total - used;
-    resultBtn.disabled = used !== 100;
-  };
-
-  grid.appendChild(card);
-});
-
-resultBtn.onclick = () => {
-  let matchedBooks = books.filter(book =>
-    selected[book.main]
-  );
-
-  resultDiv.innerHTML = "<h2>推薦書單</h2>";
-  matchedBooks.forEach(book => {
-    resultDiv.innerHTML += `
-      <p>
-        <a href="${book.url}" target="_blank" style="color:#ff4d6d">
-        ${book.title}
-        </a>
-      </p>
-    `;
-  });
+const books = {
+ read_room:{
+   title:"閱讀空氣懂人心",
+   url:"https://leadership.ntu.edu.tw/read-the-room/"
+ },
+ charisma:{
+   title:"魅力學",
+   url:"https://leadership.ntu.edu.tw/%e9%ad%85%e5%8a%9b%e5%ad%b8%ef%bc%9a%e7%84%a1%e5%be%80%e4%b8%8d%e5%88%a9%e7%9a%84%e8%87%aa%e6%88%91%e7%b6%93%e7%87%9f%e8%a1%93/"
+ },
+ product_planning:{
+   title:"熱賣商品企劃力",
+   url:"https://leadership.ntu.edu.tw/best-selling_product_planning/"
+ },
+ innovation:{
+   title:"破框思維的技術",
+   url:"https://leadership.ntu.edu.tw/%e7%a0%b4%e6%a1%86%e6%80%9d%e7%b6%ad6%e6%ad%a5%e9%a9%9f%e7%94%a8%e5%85%a8%e4%ba%ba%e9%a1%9e%e7%9a%84%e6%99%ba%e6%85%a7%e7%a9%8d%e7%b4%af%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c/"
+ },
+ idea_system:{
+   title:"點子流",
+   url:"https://leadership.ntu.edu.tw/%e9%bb%9e%e5%ad%90%e6%b5%81/"
+ },
+ communication:{
+   title:"溝通的黃金法則",
+   url:"https://leadership.ntu.edu.tw/%e6%ba%9d%e9%80%9a%e7%9a%84%e9%bb%83%e9%87%91%e6%b3%95%e5%89%87/"
+ },
+ productivity:{
+   title:"最有生產力的一年",
+   url:"https://leadership.ntu.edu.tw/effective_productivity_habit/"
+ },
+ thoughtfulness:{
+   title:"體貼是練出來的",
+   url:"https://leadership.ntu.edu.tw/thoughtfulness-is-a-skill-you-build/"
+ },
+ focus:{
+   title:"深度數位大掃除",
+   url:"https://leadership.ntu.edu.tw/digital-minimalism/"
+ },
+ project_system:{
+   title:"一頁紙做兩倍事，高效專案工作法",
+   url:"https://leadership.ntu.edu.tw/high-efficiency-project-management/"
+ },
+ content_business:{
+   title:"內容電力公司",
+   url:"https://leadership.ntu.edu.tw/content-marketing/"
+ },
+ learning:{
+   title:"超速進步",
+   url:"https://leadership.ntu.edu.tw/get-better-at-anything/"
+ }
 };
 
-    </script>
+
+// ===== 邏輯 =====
+
+let total=100;
+let used=0;
+let selected={};
+
+const grid=document.getElementById("skillGrid");
+const remain=document.getElementById("remain");
+const resultBtn=document.getElementById("resultBtn");
+const resultDiv=document.getElementById("result");
+
+skills.forEach(skill=>{
+
+ const card=document.createElement("div");
+ card.className="card";
+ card.innerHTML=`${skill.name}<br>${skill.cost}點`;
+
+ card.onclick=()=>{
+
+   if(selected[skill.id]){
+
+     used-=skill.cost;
+     delete selected[skill.id];
+     card.classList.remove("selected");
+
+   }else{
+
+     if(used+skill.cost>total){
+       alert("點數不足");
+       return;
+     }
+
+     used+=skill.cost;
+     selected[skill.id]=true;
+     card.classList.add("selected");
+
+   }
+
+   remain.innerText=total-used;
+
+   resultBtn.disabled=Object.keys(selected).length===0;
+
+ };
+
+ grid.appendChild(card);
+
+});
+
+
+// ===== 顯示書單 =====
+
+resultBtn.onclick=()=>{
+
+ resultDiv.innerHTML="<h2>推薦書單</h2>";
+
+ Object.keys(selected).forEach(skillId=>{
+
+   const book=books[skillId];
+
+   resultDiv.innerHTML+=`
+     <div class="book">
+       <a href="${book.url}" target="_blank">
+         ${book.title}
+       </a>
+     </div>
+   `;
+
+ });
+
+};
+
+
+</script>
 
 </body>
 </html>
