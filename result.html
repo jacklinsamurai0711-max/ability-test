@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>推薦書單</title>
+
+<style>
+
+body{
+ font-family:-apple-system,BlinkMacSystemFont;
+ background:linear-gradient(135deg,#a18cd1,#fbc2eb);
+ margin:0;
+ padding:20px;
+}
+
+.container{
+ max-width:500px;
+ margin:auto;
+}
+
+h1{
+ color:white;
+}
+
+.book{
+ background:white;
+ border-radius:16px;
+ padding:15px;
+ margin-bottom:15px;
+ box-shadow:0 10px 20px rgba(0,0,0,0.2);
+ transform:translateY(30px);
+ opacity:0;
+ animation:fadeUp 0.6s forwards;
+}
+
+.book img{
+ width:100%;
+ border-radius:10px;
+}
+
+.book-title{
+ font-size:18px;
+ margin-top:10px;
+ font-weight:bold;
+}
+
+button{
+ width:100%;
+ padding:15px;
+ border:none;
+ border-radius:12px;
+ font-size:16px;
+ margin-top:20px;
+ background:#6c63ff;
+ color:white;
+}
+
+@keyframes fadeUp{
+ to{
+  transform:translateY(0);
+  opacity:1;
+ }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>推薦書單</h1>
+
+<div id="list"></div>
+
+<button onclick="goBack()">
+重新選擇能力
+</button>
+
+</div>
+
+<script>
+
+const books = {
+
+ project_system:{
+ title:"一頁紙做兩倍事，高效專案工作法",
+ image:"images/one_paper.png",
+ url:"https://leadership.ntu.edu.tw/high-efficiency-project-management/"
+ },
+
+ content_business:{
+ title:"內容電力公司",
+ image:"images/content.jpg",
+ url:"https://leadership.ntu.edu.tw/content-marketing/"
+ },
+
+ productivity:{
+ title:"最有生產力的一年",
+ image:"images/produce.jpg",
+ url:"https://leadership.ntu.edu.tw/effective_productivity_habit/"
+ }
+
+};
+
+const selected=JSON.parse(localStorage.getItem("selectedSkills")||"[]");
+
+const list=document.getElementById("list");
+
+selected.forEach((skillId,i)=>{
+
+ if(!books[skillId]) return;
+
+ const book=books[skillId];
+
+ list.innerHTML+=`
+
+ <div class="book" style="animation-delay:${i*0.1}s">
+
+   <img src="${book.image}">
+
+   <div class="book-title">
+     ${book.title}
+   </div>
+
+   <button onclick="openBook('${book.url}')">
+   查看介紹
+   </button>
+
+ </div>
+
+ `;
+
+});
+
+function openBook(url){
+
+ window.open(url);
+
+}
+
+function goBack(){
+
+ window.location.href="index.html";
+
+}
+
+</script>
+
+</body>
+</html>
