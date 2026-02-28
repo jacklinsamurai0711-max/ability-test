@@ -82,7 +82,13 @@ button:disabled{
   border-radius:10px;
   margin-bottom:10px;
 }
-
+  
+.book img{
+  width:100%;
+  border-radius:8px;
+  margin-bottom:10px;
+}
+  
 .book a{
   color:#ff4d6d;
   text-decoration:none;
@@ -260,13 +266,17 @@ resultBtn.onclick=()=>{
 
    const book=books[skillId];
 
-   resultDiv.innerHTML+=`
-     <div class="book">
-       <a href="${book.url}" target="_blank">
-         ${book.title}
-       </a>
-     </div>
-   `;
+  resultDiv.innerHTML+=`
+  <div class="book">
+
+    <img src="${book.image}">
+
+    <a href="${book.url}" target="_blank">
+      ${book.title}
+    </a>
+
+  </div>
+`;
 
  });
 
@@ -277,4 +287,5 @@ resultBtn.onclick=()=>{
 
 </body>
 </html>
+
 
