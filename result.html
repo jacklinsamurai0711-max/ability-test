@@ -262,7 +262,7 @@ async function shareImage(){
  ctx.fillText(
    `${count}`,
    540,
-   280
+   300
  );
 
  ctx.fillStyle="#2B2B2B";
@@ -272,12 +272,12 @@ async function shareImage(){
  ctx.fillText(
    `本書`,
    540,
-   360
+   380
  );
 
  // ===== 畫書封（保持比例，不壓縮） =====
 
- let y = 520;
+ let y = 420;
 
  const maxWidth = 800;
  const maxHeight = 380;
@@ -312,23 +312,7 @@ async function shareImage(){
 
  }
 
- // ===== 底部資訊 =====
 
- ctx.fillStyle="#666666";
-
- ctx.font="40px 'Noto Sans TC', sans-serif";
-
- ctx.fillText(
-   "FB：臺大領導學程",
-   540,
-   1720
- );
-
- ctx.fillText(
-   "IG：ntu_leadership",
-   540,
-   1780
- );
 
  // ===== 下載 =====
 
