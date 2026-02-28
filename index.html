@@ -2,8 +2,6 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-
-<!-- 手機版關鍵設定 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>能力投資測驗</title>
@@ -11,9 +9,8 @@
 <style>
 
 body{
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
-  background:#111;
-  color:white;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+  background:linear-gradient(135deg,#ffe29f,#ffa99f,#ff719a);
   margin:0;
   padding:20px;
 }
@@ -26,34 +23,40 @@ body{
 h1{
   font-size:24px;
   line-height:1.5;
-  margin-bottom:20px;
+  color:#333;
 }
 
 .points{
   font-size:20px;
-  margin-bottom:20px;
+  margin:15px 0;
+  color:#333;
+  font-weight:bold;
 }
 
 .grid{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
 
 .card{
   background:white;
-  color:black;
-  padding:18px;
-  border-radius:12px;
-  font-size:18px;
+  padding:14px;
+  border-radius:14px;
+  font-size:16px;
   cursor:pointer;
   border:3px solid transparent;
+  text-align:center;
+  transition:0.2s;
+}
+
+.card:active{
+  transform:scale(0.95);
 }
 
 .card.selected{
   background:#ff4d6d;
   color:white;
-  border:3px solid #ff4d6d;
 }
 
 button{
@@ -61,38 +64,15 @@ button{
   padding:16px;
   font-size:18px;
   margin-top:20px;
-  border-radius:12px;
+  border-radius:14px;
   border:none;
-  background:#ff4d6d;
+  background:#6c63ff;
   color:white;
+  font-weight:bold;
 }
 
 button:disabled{
   background:gray;
-}
-
-.result{
-  margin-top:30px;
-}
-
-.book{
-  background:white;
-  color:black;
-  padding:15px;
-  border-radius:10px;
-  margin-bottom:10px;
-}
-  
-.book img{
-  width:100%;
-  border-radius:8px;
-  margin-bottom:10px;
-}
-  
-.book a{
-  color:#ff4d6d;
-  text-decoration:none;
-  font-weight:bold;
 }
 
 </style>
@@ -117,13 +97,9 @@ button:disabled{
 查看推薦書單
 </button>
 
-<div id="result" class="result"></div>
-
 </div>
 
 <script>
-
-// ===== 能力 =====
 
 const skills = [
  {id:"read_room",name:"閱讀空氣",cost:30},
@@ -140,96 +116,32 @@ const skills = [
  {id:"learning",name:"高效學習",cost:40}
 ];
 
-
-// ===== 書籍 =====
-
-const books = {
- read_room:{
-   title:"閱讀空氣懂人心",
-   image: "images/air.png",
-   url:"https://leadership.ntu.edu.tw/read-the-room/"
- },
- charisma:{
-   title:"魅力學",
-   image: "images/charm.jpg",
-   url:"https://leadership.ntu.edu.tw/%e9%ad%85%e5%8a%9b%e5%ad%b8%ef%bc%9a%e7%84%a1%e5%be%80%e4%b8%8d%e5%88%a9%e7%9a%84%e8%87%aa%e6%88%91%e7%b6%93%e7%87%9f%e8%a1%93/"
- },
- product_planning:{
-   title:"熱賣商品企劃力",
-   image: "images/marketing.jpg",
-   url:"https://leadership.ntu.edu.tw/best-selling_product_planning/"
- },
- innovation:{
-   title:"破框思維的技術",
-   image: "images/out_box.jpg",
-   url:"https://leadership.ntu.edu.tw/%e7%a0%b4%e6%a1%86%e6%80%9d%e7%b6%ad6%e6%ad%a5%e9%a9%9f%e7%94%a8%e5%85%a8%e4%ba%ba%e9%a1%9e%e7%9a%84%e6%99%ba%e6%85%a7%e7%a9%8d%e7%b4%af%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c/"
- },
- idea_system:{
-   title:"點子流",
-   image: "images/ideas.jpg",
-   url:"https://leadership.ntu.edu.tw/%e9%bb%9e%e5%ad%90%e6%b5%81/"
- },
- communication:{
-   title:"溝通的黃金法則",
-   image: "images/communicate.jpg",
-   url:"https://leadership.ntu.edu.tw/%e6%ba%9d%e9%80%9a%e7%9a%84%e9%bb%83%e9%87%91%e6%b3%95%e5%89%87/"
- },
- productivity:{
-   title:"最有生產力的一年",
-   image: "images/produce.jpg",
-   url:"https://leadership.ntu.edu.tw/effective_productivity_habit/"
- },
- thoughtfulness:{
-   title:"體貼是練出來的",
-   image: "images/tender.jpg",
-   url:"https://leadership.ntu.edu.tw/thoughtfulness-is-a-skill-you-build/"
- },
- focus:{
-   title:"深度數位大掃除",
-   image: "images/digitclean.jpg",
-   url:"https://leadership.ntu.edu.tw/digital-minimalism/"
- },
- project_system:{
-   title:"一頁紙做兩倍事，高效專案工作法",
-   image: "images/one_paper.png",
-   url:"https://leadership.ntu.edu.tw/high-efficiency-project-management/"
- },
- content_business:{
-   title:"內容電力公司",
-   image: "images/content.jpg",
-   url:"https://leadership.ntu.edu.tw/content-marketing/"
- },
- learning:{
-   title:"超速進步",
-   image: "images/upgrade.jpg",
-   url:"https://leadership.ntu.edu.tw/get-better-at-anything/"
- }
-};
-
-
-// ===== 邏輯 =====
-
 let total=100;
 let used=0;
-let selected={};
+let selected=[];
 
 const grid=document.getElementById("skillGrid");
 const remain=document.getElementById("remain");
 const resultBtn=document.getElementById("resultBtn");
-const resultDiv=document.getElementById("result");
 
 skills.forEach(skill=>{
 
  const card=document.createElement("div");
+
  card.className="card";
- card.innerHTML=`${skill.name}<br>${skill.cost}點`;
+
+ card.innerHTML=`
+   ${skill.name}
+   <br>
+   ${skill.cost}點
+ `;
 
  card.onclick=()=>{
 
-   if(selected[skill.id]){
+   if(selected.includes(skill.id)){
 
+     selected=selected.filter(s=>s!==skill.id);
      used-=skill.cost;
-     delete selected[skill.id];
      card.classList.remove("selected");
 
    }else{
@@ -239,15 +151,15 @@ skills.forEach(skill=>{
        return;
      }
 
+     selected.push(skill.id);
      used+=skill.cost;
-     selected[skill.id]=true;
      card.classList.add("selected");
 
    }
 
    remain.innerText=total-used;
 
-   resultBtn.disabled=Object.keys(selected).length===0;
+   resultBtn.disabled=selected.length===0;
 
  };
 
@@ -256,36 +168,15 @@ skills.forEach(skill=>{
 });
 
 
-// ===== 顯示書單 =====
-
 resultBtn.onclick=()=>{
 
- resultDiv.innerHTML="<h2>推薦書單</h2>";
+ localStorage.setItem("selectedSkills",JSON.stringify(selected));
 
- Object.keys(selected).forEach(skillId=>{
-
-   const book=books[skillId];
-
-  resultDiv.innerHTML+=`
-  <div class="book">
-
-    <img src="${book.image}">
-
-    <a href="${book.url}" target="_blank">
-      ${book.title}
-    </a>
-
-  </div>
-`;
-
- });
+ window.location.href="result.html";
 
 };
-
 
 </script>
 
 </body>
 </html>
-
-
